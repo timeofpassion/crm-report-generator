@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy:   #1A3A6B;
+  --blue:   #2D7DD2;
+  --amber:  #E8A020;
+  --light:  #EBF3FB;
+}
+
+body {
+  background: #F8FAFC;
+  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+}
