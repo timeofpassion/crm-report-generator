@@ -2,17 +2,18 @@ import PptxGenJS from 'pptxgenjs';
 import { AnalysisResult } from './dataAnalyzer';
 import { HospitalConfig } from './hospitalConfig';
 
-// ── 색상 상수 ────────────────────────────────────────────────────────────────
-const CP  = '1A3A6B';  // Primary  navy
-const CS  = '2D7DD2';  // Secondary blue
-const CA  = 'E8A020';  // Accent   amber
-const CL  = 'EBF3FB';  // Light bg
+// ── 색상 상수 (열정의시간 브랜드) ─────────────────────────────────────────────
+const CP  = 'E63329';  // Primary  red
+const CS  = '1C5FA6';  // Secondary blue
+const CA  = 'F5C200';  // Accent   yellow
+const CX  = '5CC8E0';  // Cyan
+const CL  = 'FFF0EF';  // Light red bg
 const CW  = 'FFFFFF';  // White
-const CD  = '1C2B3A';  // Dark text
+const CD  = '1A1A2E';  // Dark text
 const CG  = '6B7280';  // Gray
-const CG2 = 'F3F4F6';  // Light gray
+const CG2 = 'F8F8F9';  // Light gray
 
-const CHART_COLORS = [CS, CA, '27AE60', 'E74C3C', '9B59B6', '1ABC9C', 'E67E22', '3498DB'];
+const CHART_COLORS = [CP, CS, CA, CX, '27AE60', '9B59B6', 'E67E22', '3498DB'];
 const FONT         = '맑은 고딕';
 const SW = 13.33, SH = 7.5;
 
@@ -72,12 +73,18 @@ function addTable(
 
 function slideCover(pptx: PptxGenJS, rc: ReportConfig) {
   const slide = pptx.addSlide();
-  slide.addShape('rect', { x: 0, y: 0, w: SW, h: SH, fill: { color: CP }, line: { color: CP } });
-  slide.addShape('rect', { x: 0, y: SH - 1.2, w: SW, h: 0.12, fill: { color: CA }, line: { color: CA } });
-  slide.addText(rc.hospitalName, { x: 1, y: 1.8, w: SW - 2, h: 1.2, fontSize: 40, bold: true, color: CW, align: 'center', fontFace: FONT });
-  slide.addText('매출분석 보고서', { x: 1, y: 3.0, w: SW - 2, h: 0.9, fontSize: 28, color: CW, align: 'center', fontFace: FONT });
-  slide.addText(`${rc.year}년 ${rc.month}월`, { x: 1, y: 3.9, w: SW - 2, h: 0.7, fontSize: 20, bold: true, color: CA, align: 'center', fontFace: FONT });
-  slide.addText(rc.teamName, { x: 1, y: SH - 1.0, w: SW - 2, h: 0.5, fontSize: 12, color: 'AABCD4', align: 'center', fontFace: FONT });
+  // 배경: 다크
+  slide.addShape('rect', { x: 0, y: 0, w: SW, h: SH, fill: { color: '1A1A2E' }, line: { color: '1A1A2E' } });
+  // 레드 세로 사이드바
+  slide.addShape('rect', { x: 0, y: 0, w: 0.18, h: SH, fill: { color: CP }, line: { color: CP } });
+  // 옐로우 하단 라인
+  slide.addShape('rect', { x: 0, y: SH - 0.12, w: SW, h: 0.12, fill: { color: CA }, line: { color: CA } });
+  // 레드 타이틀 배경
+  slide.addShape('rect', { x: 0.18, y: 2.2, w: SW - 0.18, h: 1.1, fill: { color: CP }, line: { color: CP } });
+  slide.addText(rc.hospitalName, { x: 0.65, y: 2.28, w: SW - 1.0, h: 0.95, fontSize: 34, bold: true, color: CW, align: 'left', fontFace: FONT });
+  slide.addText('매출분析 보고서', { x: 0.65, y: 3.5, w: SW - 1.0, h: 0.75, fontSize: 22, color: 'D0D0D8', align: 'left', fontFace: FONT });
+  slide.addText(`${rc.year}년 ${rc.month}월`, { x: 0.65, y: 4.3, w: SW - 1.0, h: 0.6, fontSize: 17, bold: true, color: CA, align: 'left', fontFace: FONT });
+  slide.addText(rc.teamName, { x: 0.65, y: SH - 0.55, w: SW - 1.0, h: 0.42, fontSize: 10, color: '7070A0', align: 'left', fontFace: FONT });
 }
 
 function slideExecutiveSummary(pptx: PptxGenJS, analysis: AnalysisResult, rc: ReportConfig) {

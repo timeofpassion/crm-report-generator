@@ -3,13 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --navy:   #1A3A6B;
-  --blue:   #2D7DD2;
-  --amber:  #E8A020;
-  --light:  #EBF3FB;
+  --red:    #E63329;
+  --red-dk: #C0271E;
+  --blue:   #1C5FA6;
+  --yellow: #F5C200;
+  --cyan:   #5CC8E0;
+  --light:  #FFF5F5;
+  --dark:   #1A1A2E;
 }
 
 body {
-  background: #F8FAFC;
+  background: #F8F8F9;
   font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+}
+
+input, select, textarea {
+  font-family: inherit;
 }
