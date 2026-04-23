@@ -63,7 +63,7 @@ export default function Home() {
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href     = url;
-      a.download = `${hospitalName}_${year}년${month}월_매출분析보고서.pptx`;
+      a.download = `${hospitalName}_${year}년${month}월_매출분석보고서.pptx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -259,7 +259,7 @@ export default function Home() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                분析 중... (30초~1분 소요)
+                분석 중... (30초~1분 소요)
               </span>
             ) : '🚀  PPT 보고서 생성'}
           </button>

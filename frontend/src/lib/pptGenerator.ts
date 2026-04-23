@@ -82,7 +82,7 @@ function slideCover(pptx: PptxGenJS, rc: ReportConfig) {
   // 레드 타이틀 배경
   slide.addShape('rect', { x: 0.18, y: 2.2, w: SW - 0.18, h: 1.1, fill: { color: CP }, line: { color: CP } });
   slide.addText(rc.hospitalName, { x: 0.65, y: 2.28, w: SW - 1.0, h: 0.95, fontSize: 34, bold: true, color: CW, align: 'left', fontFace: FONT });
-  slide.addText('매출분析 보고서', { x: 0.65, y: 3.5, w: SW - 1.0, h: 0.75, fontSize: 22, color: 'D0D0D8', align: 'left', fontFace: FONT });
+  slide.addText('매출분석 보고서', { x: 0.65, y: 3.5, w: SW - 1.0, h: 0.75, fontSize: 22, color: 'D0D0D8', align: 'left', fontFace: FONT });
   slide.addText(`${rc.year}년 ${rc.month}월`, { x: 0.65, y: 4.3, w: SW - 1.0, h: 0.6, fontSize: 17, bold: true, color: CA, align: 'left', fontFace: FONT });
   slide.addText(rc.teamName, { x: 0.65, y: SH - 0.55, w: SW - 1.0, h: 0.42, fontSize: 10, color: '7070A0', align: 'left', fontFace: FONT });
 }
