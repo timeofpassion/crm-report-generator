@@ -12,6 +12,9 @@ export interface KPIs {
 export interface CategorySales {
   category: string; revenue: number; count: number; pct: number;
 }
+export interface ProcedureSales {
+  name: string; revenue: number; count: number; pct: number; category: string;
+}
 export interface DoctorSales {
   doctor: string; category: string; revenue: number; count: number;
 }
@@ -33,6 +36,7 @@ export interface PatientSpend { chartNo: string; total: number; visits: number; 
 export interface AnalysisResult {
   kpis: KPIs;
   categorySales: CategorySales[];
+  topProcedures: ProcedureSales[];
   doctorSales: DoctorSales[];
   channelSales: ChannelSales[];
   nationalitySales: NationalitySales[];
@@ -104,6 +108,22 @@ export class DataAnalyzer {
         pct: (sumBy(rows, r => r.amount) / totalRev) * 100,
       }))
       .sort((a, b) => b.revenue - a.revenue);
+
+    // Top individual procedures (시술별 TOP 순위)
+    const procGroups = groupBy(tagged.filter(r => r.order_name), r => r.order_name);
+    result.topProcedures = Array.from(procGroups.entries())
+      .map(([name, rows]) => {
+        const revenue = sumBy(rows, r => r.amount);
+        return {
+          name,
+          revenue,
+          count: rows.length,
+          pct: (revenue / totalRev) * 100,
+          category: rows[0].category,
+        };
+      })
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 20);
 
     // Doctor sales
     const docRows = tagged.filter(r => r.doctor && r.doctor !== '미기재');
@@ -221,6 +241,10 @@ export class DataAnalyzer {
       const top = r.categorySales[0];
       findings.push(`최고 매출 카테고리: ${top.category} (${top.pct.toFixed(1)}% · ${fmtKrw(top.revenue)})`);
     }
+    if (r.topProcedures.length) {
+      const top = r.topProcedures[0];
+      findings.push(`매출 1위 시술: ${top.name} (${fmtKrw(top.revenue)} · ${top.count}건)`);
+    }
     if (r.channelSales.length) {
       const top = r.channelSales[0];
       findings.push(`주요 유입경로: ${top.channel} (방문 ${top.count.toLocaleString()}건)`);
@@ -235,25 +259,46 @@ export class DataAnalyzer {
 
   private generateInsights(r: AnalysisResult): AnalysisResult['insights'] {
     const ins = { doctor: [] as string[], marketing: [] as string[], operations: [] as string[] };
+
     if (r.categorySales.length >= 2) {
       const top2 = r.categorySales.slice(0, 2).map(c => c.category).join(' / ');
       ins.doctor.push(`핵심 매출 시술 ${top2} — 집중 역량 강화 권고`);
     }
+    if (r.topProcedures.length) {
+      ins.doctor.push(`매출 1위 시술 '${r.topProcedures[0].name}' 수요 강세 지속 — 예약 슬롯 확대 검토`);
+    }
     if (r.patientSpending.length >= 10) {
       const p90 = r.patientSpending[Math.floor(r.patientSpending.length * 0.1)].total;
-      ins.doctor.push(`상위 10% 고객 객단가 ${fmtKrw(p90)} — VIP 케어 도입 검토`);
+      ins.doctor.push(`상위 10% 객단가 ${fmtKrw(p90)} — VIP 관리 프로그램 도입 검토`);
     }
+
     if (r.channelSales.length >= 1) {
-      ins.marketing.push(`주요 채널 '${r.channelSales[0].channel}' 집중 투자로 ROI 극대화`);
+      const topVol = r.channelSales[0];
+      ins.marketing.push(`유입량 1위 '${topVol.channel}' (${topVol.count}건) — 예산 유지 및 광고 소재 리프레시 권장`);
     }
     if (r.channelSales.length >= 2) {
-      ins.marketing.push(`2위 채널 '${r.channelSales[1].channel}' 성장 가능성 테스트 권장`);
+      const byEff = [...r.channelSales].filter(c => c.count >= 3).sort((a, b) => b.avg - a.avg);
+      if (byEff.length) {
+        ins.marketing.push(`건당 매출 최고 채널 '${byEff[0].channel}' (${fmtKrw(byEff[0].avg)}) — 투자 확대 우선 고려`);
+      }
     }
+    if (r.crossSelling && r.crossSelling.crossSellRate < 30) {
+      ins.marketing.push(`복합시술 비율 ${r.crossSelling.crossSellRate.toFixed(1)}% — 패키지 프로모션으로 객단가 제고 가능`);
+    }
+
     if (r.weekdayTrends.length) {
       const best  = r.weekdayTrends.reduce((a, b) => a.revenue > b.revenue ? a : b);
-      const worst = r.weekdayTrends.reduce((a, b) => a.revenue < b.revenue ? a : b);
-      ins.operations.push(`최다 매출 ${best.name}요일 — 스태프 배치 강화`);
-      ins.operations.push(`최저 매출 ${worst.name}요일 — 프로모션 기획 검토`);
+      const worst = r.weekdayTrends.filter(d => d.count > 0).reduce((a, b) => a.revenue < b.revenue ? a : b);
+      ins.operations.push(`최다 매출 ${best.name}요일 — 스태프 배치 강화 및 예약 시스템 최적화`);
+      if (worst.name !== best.name) {
+        ins.operations.push(`${worst.name}요일 매출 저조 — 한정 이벤트 기획으로 방문 유도`);
+      }
+    }
+    if (r.kpis.uniquePatients > 0) {
+      const revisitRate = r.patientSpending.filter(p => p.visits >= 2).length / r.kpis.uniquePatients * 100;
+      if (revisitRate > 0) {
+        ins.operations.push(`재방문 환자 비율 ${revisitRate.toFixed(1)}% — 리텐션 프로그램 강화 권장`);
+      }
     }
     return ins;
   }
