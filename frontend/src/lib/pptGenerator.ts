@@ -633,7 +633,7 @@ function slideAppendixCover(pptx: PptxGenJS, rc: ReportConfig) {
 
 function slideVip(pptx: PptxGenJS, analysis: AnalysisResult, rc: ReportConfig) {
   const slide = pptx.addSlide();
-  header(slide, '[부록] VIP 환자 분析 (상위 10%)', 16, rc);
+  header(slide, '[부록] VIP 환자 분석 (상위 10%)', 16, rc);
   const { patientSpending } = analysis;
   if (!patientSpending.length) return;
 
@@ -665,10 +665,10 @@ export async function generatePPT(
   slideCover(pptx, rc);
   // 2. Executive Summary
   slideExecutiveSummary(pptx, analysis, rc);
-  // 섹션 1 — 시술별/수술별 매출 동향분析
+  // 섹션 1 — 시술별/수술별 매출 동향분석
   slideCategorySales(pptx, analysis, rc);     // 3
   slideTopProcedures(pptx, analysis, rc);     // 4
-  // 섹션 2 — 유입경로 분析
+  // 섹션 2 — 유입경로 분석
   slideChannelSales(pptx, analysis, rc);      // 5
   // 섹션 3 — 마케팅 유입 & 매출 상관관계
   slideMarketingCorrelation(pptx, analysis, rc); // 6
@@ -678,7 +678,7 @@ export async function generatePPT(
   slideNextMonthStrategy(pptx, analysis, rc); // 8
   // 섹션 5 — 추가 견적사항
   slideQuotation(pptx, analysis, rc);         // 9
-  // 부가 분析
+  // 부가 분석
   slideCrossSelling(pptx, analysis, rc);      // 10
   slideDoctorSales(pptx, analysis, rc);       // 11
   slideNationality(pptx, analysis, rc);       // 12
